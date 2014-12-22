@@ -35,8 +35,8 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x000006c177db5ca3b0b4a361970075219e5b9dee8f8f72d9fba6cb5bdf3de69e");
-static const unsigned int timeGenesisBlock = 1413128269;
+uint256 hashGenesisBlock("0x000001743a22ba983d054d07b92d95acd5fb8639cd18a4774668c149b5c6bd35");
+static const unsigned int timeGenesisBlock = 1419250578;
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20);
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -1078,11 +1078,11 @@ uint256 static GetOrphanRoot(const CBlockHeader* pblock)
 }
 
 #define BLOCKS_MINING_VIA_MINUTE 4
-static const int64 nGenesisBlockRewardCoin = 500000000 * COIN;
-static const int64 nBlockRewardStartCoin = 500000000 * COIN;
-static const int64 nBlockRewardMinimumCoin = 25 * COIN;
-static const int64 nTargetTimespan = (((60*60)*24)*30)*300000; // 60*60 //60 minutes
-static const int64 nTargetSpacing = 15; // 60 //60 seconds
+static const int64 nGenesisBlockRewardCoin = 5000000 * COIN;
+static const int64 nBlockRewardStartCoin = 5000000 * COIN;
+static const int64 nBlockRewardMinimumCoin = 50000 * COIN;
+static const int64 nTargetTimespan = 60*60*3; // 60*60 //60 minutes
+static const int64 nTargetSpacing = 60; // 60 //60 seconds
 static const int64 nInterval = nTargetTimespan / nTargetSpacing; // 20 blocks
 static const int64 blocksMiningViaMinute=60/nTargetSpacing;
 
@@ -1096,7 +1096,7 @@ int64 static GetBlockValue(int nHeight, int64 nFees, unsigned int nBits)
     int64 nSubsidy = nBlockRewardStartCoin;
 
     // Subsidy is cut in half every 80640 blocks (14 days)
-    nSubsidy >>= (nHeight / 80640);
+    nSubsidy >>= (nHeight / 10080);
     
     // Minimum subsidy
     if (nSubsidy < nBlockRewardMinimumCoin)
@@ -1104,17 +1104,6 @@ int64 static GetBlockValue(int nHeight, int64 nFees, unsigned int nBits)
         nSubsidy = nBlockRewardMinimumCoin;
     }
 	
-	// Minimum subsidy divide through 10 power after every 27 days
-    if (nSubsidy == nBlockRewardMinimumCoin)
-    {	
-		if(BLOCKS_MINING_VIA_MINUTE != 4)
-			return nSubsidy;
-		nSubsidy >>= 3*(nHeight/155520);
-		int64 minimum=nBlockRewardMinimumCoin / 100000000000000;
-		if(nSubsidy < minimum)
-			nSubsidy=minimum;
-    }
-
     return nSubsidy + nFees;
 }
 
@@ -1146,14 +1135,14 @@ unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
 unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
 {
     unsigned int nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
-	int64 lastHeight = pindexLast->nHeight+1;
+	/*int64 lastHeight = pindexLast->nHeight+1;
 	if(lastHeight>=nInterval)
 	{
 		int64 * _nTargetTimespan = (int64 *)&nTargetTimespan;
 		int64 * _nInterval = (int64 *)&nInterval;
 		*_nTargetTimespan = 60*9.5;
 		*_nInterval = *_nTargetTimespan / nTargetSpacing;
-	}
+	}*/
     // Genesis block
     if (pindexLast == NULL)
         return nProofOfWorkLimit;
@@ -2760,7 +2749,7 @@ bool LoadBlockIndex()
         pchMessageStart[1] = 0x1A;
         pchMessageStart[2] = 0x39;
         pchMessageStart[3] = 0xF8;	  
-        hashGenesisBlock = uint256("0x000006c177db5ca3b0b4a361970075219e5b9dee8f8f72d9fba6cb5bdf3de69e");
+        hashGenesisBlock = uint256("0x000001743a22ba983d054d07b92d95acd5fb8639cd18a4774668c149b5c6bd35");
     }
 
     //
@@ -2809,7 +2798,7 @@ CBlock(hash=00000e5e37c42d6b67d0934399adfb0fa48b59138abb1a8842c88f4ca3d4ec96, ve
 
         // Genesis block
 		const char* oldpszTimestamp = "Jan 3th 2014. NSA developing code-cracking quantum computer. Fck!";
-        const char* pszTimestamp = "Oct 10th 2014. Nude Snapchat images put online by hackers. Fck!";
+        const char* pszTimestamp = "Dec 22th 2014. Sony hack: North Korea threatens US as row deepens. Fck!";
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
@@ -2823,12 +2812,12 @@ CBlock(hash=00000e5e37c42d6b67d0934399adfb0fa48b59138abb1a8842c88f4ca3d4ec96, ve
         block.nVersion = 112;
         block.nTime    = timeGenesisBlock;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = 14311643;
+        block.nNonce   = 14190578;
 
         if (fTestNet)
         {
-            block.nTime    = 1413128269;
-            block.nNonce   = 14311643;
+            block.nTime    = 1419250578;
+            block.nNonce   = 14190578;
         }
 
         //// debug print
@@ -2842,7 +2831,7 @@ CBlock(hash=00000e5e37c42d6b67d0934399adfb0fa48b59138abb1a8842c88f4ca3d4ec96, ve
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
         block.print();
-        assert(block.hashMerkleRoot == uint256("0x32921aab66fe24c2c753a322191b660e1d813b10afb53821bca6b1553c322421"));
+        assert(block.hashMerkleRoot == uint256("0xe3916cc096ccb15833de1efb205ad7d53de8bcd8ecfc16ebb5c038a4e144c4f6"));
         assert(hash == hashGenesisBlock);
 
         // Start new block file

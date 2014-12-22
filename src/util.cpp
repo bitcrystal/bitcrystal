@@ -1040,7 +1040,7 @@ boost::filesystem::path GetDefaultDataDir()
     // Unix: ~/.bitcrystal
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "BitCrystal";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "BitCrystal_V20";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -1052,10 +1052,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     fs::create_directory(pathRet);
-    return pathRet / "BitCrystal";
+    return pathRet / "BitCrystal_V20";
 #else
     // Unix
-    return pathRet / ".bitcrystal";
+    return pathRet / ".bitcrystal_v20";
 #endif
 #endif
 }
